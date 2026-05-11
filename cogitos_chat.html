@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CogitOS | Cognitive Interface</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f1115;
+            --panel: rgba(23, 25, 30, 0.8);
+            --accent: #5c54c7;
+            --accent-glow: rgba(92, 84, 199, 0.2);
+            --text: #e0e0e0;
+            --text-dim: #a0a0a0;
+            --harmony: #44dd88;
+            --tension: #ffaa44;
+            --katharsis: #ff4466;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Dashboard (Sidebar) */
+        .dashboard {
+            width: 350px;
+            background: var(--panel);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid var(--border);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        .dashboard h2 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .stat-group {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid var(--border);
+        }
+
+        .gauge-container {
+            margin-bottom: 15px;
+        }
+
+        .gauge-label {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .gauge-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .gauge-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        /* Aktywne przetwarzanie */
+        .thinking .gauge-fill {
+            animation: jitter 1.5s infinite alternate;
+        }
+
+        /* Stan Tarcia (Niska Spójność) */
+        .frictional {
+            border-color: rgba(255, 87, 87, 0.4) !important;
+            box-shadow: inset 0 0 20px rgba(255, 87, 87, 0.1);
+            animation: tremor 0.5s infinite;
+        }
+
+        @keyframes tremor {
+            0% { transform: translate(0,0); }
+            25% { transform: translate(1px, -1px); }
+            50% { transform: translate(-1px, 1px); }
+            75% { transform: translate(1px, 1px); }
+            100% { transform: translate(0,0); }
+        }
+
+        /* Błysk Dopaminy */
+        .reward-flash {
+            animation: dopamine-flash 0.8s ease-out;
+        }
+
+        @keyframes dopamine-flash {
+            0% { filter: brightness(1); box-shadow: 0 0 10px var(--harmony); }
+            50% { filter: brightness(2.5); box-shadow: 0 0 30px var(--harmony); }
+            100% { filter: brightness(1); box-shadow: 0 0 10px var(--harmony); }
+        }
+
+        @keyframes jitter {
+            0% { opacity: 1; filter: brightness(1); transform: scaleY(1); }
+            50% { opacity: 0.8; filter: brightness(1.3); transform: scaleY(1.1); }
+            100% { opacity: 1; filter: brightness(1); transform: scaleY(1); }
+        }
+
+        .phase-indicator {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+
+        .tension-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            text-align: center;
+        }
+
+        .tension-item {
+            font-size: 10px;
+            color: var(--text-dim);
+        }
+
+        .tension-val {
+            font-size: 14px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text);
+            display: block;
+            margin-top: 4px;
+        }
+
+        /* Chat Area */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: radial-gradient(circle at top right, rgba(127, 119, 221, 0.05), transparent);
+        }
+
+        #chat-messages {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 15px 20px;
+            border-radius: 18px;
+            line-height: 1.6;
+            font-size: 15px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+        }
+
+        /* Logo Styling */
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 5px;
+            color: var(--text);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .logo.thinking {
+            animation: pulse-glow 1.5s infinite alternate;
+        }
+
+        @keyframes pulse-glow {
+            from {
+                text-shadow: 0 0 5px rgba(92, 84, 199, 0.2);
+                color: var(--text);
+            }
+            to {
+                text-shadow: 0 0 15px var(--accent);
+                color: #e6e5ff;
+            }
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background: var(--accent);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.bot {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 4px;
+        }
+
+        /* Message Metadata (Numbering & Copy) */
+        .message-meta {
+            font-size: 10px;
+            color: var(--text-dim);
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .msg-id {
+            cursor: pointer;
+            padding: 2px 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .msg-id:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Markdown Styling */
+        .message h1,
+        .message h2,
+        .message h3 {
+            margin: 10px 0;
+            color: var(--accent);
+            font-size: 1.2em;
+        }
+
+        .message p {
+            margin-bottom: 10px;
+        }
+
+        .message code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+        }
+
+        .message pre {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 10px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+            border: 1px solid var(--border);
+        }
+
+        .message ul,
+        .message ol {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+
+        /* Input Area */
+        .input-area {
+            padding: 30px 40px;
+            background: linear-gradient(to top, var(--bg), transparent);
+            display: flex;
+            gap: 15px;
+        }
+
+        input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 15px 25px;
+            border-radius: 14px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 20px rgba(127, 119, 221, 0.1);
+        }
+
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0 30px;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        button:hover {
+            background: #4a43a3;
+            transform: translateY(-2px);
+        }
+
+        .engram-list {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .engram-item {
+            padding: 5px;
+            border-left: 2px solid var(--accent);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .premium-select {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 10px;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23a0a0a0' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: calc(100% - 12px) center;
+            padding-right: 30px;
+        }
+
+        .premium-select:focus {
+            border-color: var(--accent);
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .premium-select option {
+            background: #1a1c22;
+            color: var(--text);
+        }
+
+        /* Toggle Switch Style */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: .4s;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 2px;
+            bottom: 2px;
+            background-color: var(--text-dim);
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--accent-glow);
+            border-color: var(--accent);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(20px);
+            background-color: var(--accent);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard">
+        <h1 id="main-logo" class="logo">Cogit<span>OS</span></h1>
+
+        <section class="stat-group">
+            <h2>Stan Psyche</h2>
+            <div class="gauge-container">
+                <div class="gauge-label"><span>Zakotwiczenie (S)</span><span id="val-s">0.00</span></div>
+                <div class="gauge-bar">
+                    <div id="fill-s" class="gauge-fill"></div>
+                </div>
+            </div>
+            <div class="gauge-container">
+                <div class="gauge-label"><span>Pobudzenie (A)</span><span id="val-a">0.00</span></div>
+                <div class="gauge-bar">
+                    <div id="fill-a" class="gauge-fill"></div>
+                </div>
+            </div>
+            <div class="gauge-container">
+                <div class="gauge-label"><span>Spójność (C)</span><span id="val-c">0.00</span></div>
+                <div class="gauge-bar">
+                    <div id="fill-c" class="gauge-fill"></div>
+                </div>
+            </div>
+            <div class="gauge-container">
+                <div class="gauge-label"><span>Dopamina</span><span id="val-d">0.00</span></div>
+                <div class="gauge-bar">
+                    <div id="fill-d" class="gauge-fill"
+                        style="background: var(--harmony); box-shadow: 0 0 10px var(--harmony);"></div>
+                </div>
+            </div>
+            <div id="motto-tag"
+                style="font-size: 11px; color: var(--accent); margin-top: 10px; font-style: italic; border-left: 2px solid var(--accent); padding-left: 8px;">
+                Motto: Inicjalizacja...</div>
+            <div id="phase-tag" class="phase-indicator">Harmonia</div>
+            <div style="font-size: 9px; color: var(--text-dim); text-align: center; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px;">
+                Krok Sesji: <span id="session-step">0</span>
+            </div>
+        </section>
+
+        <section class="stat-group">
+            <h2>Napięcia Kognitywne</h2>
+            <div class="gauge-container">
+                <div class="gauge-label"><span>Afekt (Ta)</span><span id="val-ta">0.00</span></div>
+                <div class="gauge-bar"><div id="fill-ta" class="gauge-fill" style="background: var(--katharsis);"></div></div>
+            </div>
+            <div class="gauge-container">
+                <div class="gauge-label"><span>Logika (Tc)</span><span id="val-tc">0.00</span></div>
+                <div class="gauge-bar"><div id="fill-tc" class="gauge-fill" style="background: var(--tension);"></div></div>
+            </div>
+            <div class="gauge-container">
+                <div class="gauge-label"><span>Wartości (Tv)</span><span id="val-tv">0.00</span></div>
+                <div class="gauge-bar"><div id="fill-tv" class="gauge-fill" style="background: var(--accent);"></div></div>
+            </div>
+        </section>
+
+
+
+        <section class="stat-group">
+            <h2>Model Ollama</h2>
+            <select id="model-select" class="premium-select">
+                <option value="ArchTense">Ładowanie modeli...</option>
+            </select>
+        </section>
+
+        <section class="stat-group">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="margin: 0;">Ciągłość Kognitywna</h2>
+                <label class="switch">
+                    <input type="checkbox" id="continuity-toggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <p style="font-size: 10px; color: var(--text-dim); margin-top: 8px;">Włącz, aby system pamiętał poprzednie
+                sesje i budował trwałą tożsamość.</p>
+    </div>
+
+    <div class="chat-container">
+        <div id="chat-messages">
+            <div class="message bot">System gotowy. Witaj w CogitOS. Jestem Twoją zewnętrzną warstwą kognitywną.</div>
+        </div>
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Wpisz coś, co poruszy system..."
+                onkeypress="if(event.key==='Enter') sendMessage()">
+            <button onclick="sendMessage()">WYŚLIJ</button>
+        </div>
+    </div>
+
+    <script>
+        const messagesContainer = document.getElementById('chat-messages');
+        const inputField = document.getElementById('user-input');
+
+        async function sendMessage() {
+            const text = inputField.value.trim();
+            if (!text) return;
+
+            const selectedModel = document.getElementById('model-select').value;
+            const continuity = document.getElementById('continuity-toggle').checked;
+            const logo = document.getElementById('main-logo');
+
+            // Add user message
+            appendMessage('user', text);
+            inputField.value = '';
+
+            // Włącz animację pulsowania
+            logo.classList.add('thinking');
+
+            // Prepare bot message holder
+            const botMsgDiv = appendMessage('bot', '...');
+            let fullText = "";
+            let streamFinished = false;
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        message: text,
+                        model: selectedModel,
+                        continuity: continuity
+                    })
+                });
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
+                while (!streamFinished) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\n');
+
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            const dataStr = line.slice(6);
+                            if (dataStr === '[DONE]') {
+                                streamFinished = true;
+                                break; // Breaks out of the FOR loop
+                            }
+
+                            try {
+                                const payload = JSON.parse(dataStr);
+                                if (payload.type === 'cognitive') {
+                                    updateUI(payload.data);
+                                } else if (payload.type === 'token') {
+                                    if (fullText === "") botMsgDiv.querySelector('.msg-content').innerHTML = "";
+                                    fullText += payload.data;
+                                    botMsgDiv.querySelector('.msg-content').innerHTML = marked.parse(fullText);
+                                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                                }
+                            } catch (e) { }
+                        }
+                    }
+                }
+            } catch (err) {
+                botMsgDiv.querySelector('.msg-content').innerText = "Błąd komunikacji z serwerem CogitOS.";
+            } finally {
+                // Wyłącz animację pulsowania
+                if(logo) logo.classList.remove('thinking');
+            }
+        }
+
+        let messageCount = 0;
+        function appendMessage(role, text) {
+            messageCount++;
+            const wrapper = document.createElement('div');
+            wrapper.className = `message ${role}`;
+
+            const meta = document.createElement('div');
+            meta.className = 'message-meta';
+            meta.innerHTML = `<span class="msg-id" title="Kliknij, aby skopiować" onclick="copyToClipboard('${messageCount}')">#${messageCount}</span><span>${role === 'user' ? 'Ty' : 'CogitOS'}</span>`;
+
+            const content = document.createElement('div');
+            content.className = 'msg-content';
+            content.id = `msg-text-${messageCount}`;
+            content.innerHTML = role === 'bot' ? marked.parse(text) : text;
+
+            wrapper.appendChild(meta);
+            wrapper.appendChild(content);
+            messagesContainer.appendChild(wrapper);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            return wrapper;
+        }
+
+        function copyToClipboard(id) {
+            const text = document.getElementById(`msg-text-${id}`).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const el = document.querySelector(`.message:nth-child(${id}) .msg-id`);
+                const oldText = el.innerText;
+                el.innerText = "SKOPIOWANO!";
+                el.style.color = "var(--harmony)";
+                setTimeout(() => {
+                    el.innerText = oldText;
+                    el.style.color = "";
+                }, 2000);
+            });
+        }
+
+        function updateUI(data) {
+            console.log("CogitOS Cognitive Update:", data);
+            // Pobieramy psyche i surowe napięcia (spikes)
+            const p = data.psyche || data;
+            const t = data.tension || {};
+
+            // Tension Dashboard - Reaktywność Hybrydowa (Impuls + Nastrój)
+            if (p.mood_ta !== undefined) {
+                // Wyświetlamy nastrój, ale pasek ustawiamy na wyższą z wartości (impuls lub nastrój)
+                const valA = t.T_a !== undefined ? Math.max(t.T_a, p.mood_ta) : p.mood_ta;
+                const valC = t.T_c !== undefined ? Math.max(t.T_c, p.mood_tc) : p.mood_tc;
+                const valV = t.T_v !== undefined ? Math.max(t.T_v, p.mood_tv) : p.mood_tv;
+
+                document.getElementById('val-ta').innerText = p.mood_ta;
+                document.getElementById('fill-ta').style.width = (valA * 100) + '%';
+                
+                document.getElementById('val-tc').innerText = p.mood_tc;
+                document.getElementById('fill-tc').style.width = (valC * 100) + '%';
+                
+                document.getElementById('val-tv').innerText = p.mood_tv;
+                document.getElementById('fill-tv').style.width = (valV * 100) + '%';
+                
+                // Efekt błysku przy silnym impulsie Tv
+                if (valV > 0.5) {
+                    document.getElementById('fill-tv').style.boxShadow = '0 0 15px var(--accent)';
+                } else {
+                    document.getElementById('fill-tv').style.boxShadow = 'none';
+                }
+            }
+
+            // Statystyki główne
+            if (p['S (anchor)'] !== undefined) {
+                document.getElementById('session-step').innerText = data.step_n || p.step_n || "?";
+                document.getElementById('val-s').innerText = p['S (anchor)'];
+                document.getElementById('fill-s').style.width = (p['S (anchor)'] * 100) + '%';
+                document.getElementById('val-a').innerText = p['A (arousal)'];
+                document.getElementById('fill-a').style.width = (p['A (arousal)'] * 100) + '%';
+                document.getElementById('val-c').innerText = p['C (coherence)'];
+                document.getElementById('fill-c').style.width = (p['C (coherence)'] * 100) + '%';
+            }
+
+            // Autogenia
+            if (p.dopamine !== undefined) {
+                const oldD = parseFloat(document.getElementById('val-d').innerText) || 0;
+                const dFill = document.getElementById('fill-d');
+                
+                document.getElementById('val-d').innerText = p.dopamine;
+                dFill.style.width = (p.dopamine * 100) + '%';
+                
+                // Błysk przy nagrodzie (wzrost > 0.02)
+                if (p.dopamine > oldD + 0.02) {
+                    dFill.classList.add('reward-flash');
+                    setTimeout(() => dFill.classList.remove('reward-flash'), 800);
+                }
+            }
+
+            // Stan Tarcia (Friction)
+            const dashboard = document.querySelector('.dashboard');
+            if (p['C (coherence)'] < 0.35) {
+                dashboard.classList.add('frictional');
+            } else {
+                dashboard.classList.remove('frictional');
+            }
+            if (p.motto) {
+                document.getElementById('motto-tag').innerText = "Cel: " + p.motto;
+            }
+
+            if (p.phase) {
+                const phaseTag = document.getElementById('phase-tag');
+                phaseTag.innerText = p.phase.toUpperCase();
+                if (p.phase === 'harmonia') {
+                    phaseTag.style.background = 'rgba(68, 221, 136, 0.2)';
+                    phaseTag.style.color = 'var(--harmony)';
+                } else if (p.phase === 'napięcie') {
+                    phaseTag.style.background = 'rgba(127, 119, 221, 0.2)';
+                    phaseTag.style.color = 'var(--accent)';
+                } else {
+                    phaseTag.style.background = 'rgba(255, 68, 102, 0.2)';
+                    phaseTag.style.color = 'var(--katharsis)';
+                }
+            }
+
+
+        }
+
+
+
+        async function loadState() {
+            try {
+                const res = await fetch('/api/state');
+                const data = await res.json();
+                updateUI(data);
+
+            } catch (e) { console.error("Błąd ładowania stanu", e); }
+        }
+
+        async function loadModels() {
+            try {
+                const response = await fetch('/api/models');
+                const models = await response.json();
+                const select = document.getElementById('model-select');
+                select.innerHTML = '';
+
+                models.forEach(model => {
+                    const option = document.createElement('option');
+                    option.value = model;
+                    option.innerText = model;
+                    if (model.includes('ArchTense')) option.selected = true;
+                    select.appendChild(option);
+                });
+            } catch (err) {
+                console.error("Błąd ładowania modeli:", err);
+            }
+        }
+
+        // Inicjalizacja przy starcie
+        (async function init() {
+            await loadModels();
+            await loadState();
+        })();
+    </script>
+</body>
+
+</html>
