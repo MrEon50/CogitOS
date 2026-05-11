@@ -132,6 +132,8 @@ class CogitOSHandler(http.server.BaseHTTPRequestHandler):
 
         # Wyslij stan kognitywny
         self._write_sse({"type": "cognitive", "data": cognitive_ctx})
+        
+        print(f" DEBUG: Params modulated -> {params}")
 
         # Streamuj tokeny z Ollama
         full_response = []

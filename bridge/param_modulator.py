@@ -26,9 +26,9 @@ class ParameterModulator:
             temp += 0.2 # Euforia / Nadaktywnosc
 
         params = {
-            "temperature": round(min(1.9, temp), 2),
-            "top_p": round(min(1.0, tp), 2),
-            "repeat_penalty": round(min(2.5, rp), 2),
+            "temperature": round(max(0.1, min(1.8, temp)), 2),
+            "top_p": round(max(0.05, min(1.0, tp)), 2),
+            "repeat_penalty": round(max(1.0, min(1.8, rp)), 2),
             "num_ctx": 8192,
         }
         

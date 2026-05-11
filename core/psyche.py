@@ -32,66 +32,76 @@ class Psyche:
     INV_PHI: float = 0.618033
 
     # Parametry Inercji i Kosztów
-    MOOD_ATTACK:      float = 0.35
-    MOOD_DECAY:       float = 0.94
-    COGNITIVE_COST:   float = 0.015 # Koszt Dopaminy za intensywne Tc
+    MOOD_ATTACK:      float = 0.40  # Szybsza reakcja na bodźce
+    MOOD_DECAY:       float = 0.96  # Wolniejszy spadek (system dłużej 'pamięta' stres)
+    COGNITIVE_COST:   float = 0.060 # WYSOKI: Myślenie Tc jest drogie
+    METABOLIC_COST:   float = 0.035 # WYSOKI: Samo istnienie kosztuje
     RESET_THRESHOLD:  int = 6       # Kroki przy C < 0.2 przed resetem
     
     _history: list[float] = field(default_factory=list, repr=False)
     _reset_counter: int = 0
 
     def update(self, tv: "TensionVector") -> Phase:
-        # ── 1. Aktualizacja Nastrojów (Fast Attack / Slow Decay) ──
+        # ── 1. Aktualizacja Nastrojów ──
         def calc_mood(current, target, inertia_mod=1.0):
-            attack = self.MOOD_ATTACK * inertia_mod
+            attack = min(0.95, self.MOOD_ATTACK * inertia_mod) # Clamp zabezpieczający
             if target > current:
                 return (attack * current + (1 - attack) * target)
             else:
                 return (self.MOOD_DECAY * current + (1 - self.MOOD_DECAY) * target)
 
-        # Inercja Aksjologiczna: Wysokie Tv sprawia, że Afekt (Ta) reaguje wolniej (większa masa)
-        ta_inertia = 1.0 + (self.mood_tv * self.PHI)
-        
-        # Jeśli logika jest silna, wartości mają większą siłę (integrytet)
-        if self.mood_tc > self.INV_PHI:
-            ta_inertia *= 1.4
+        # Inercja Aksjologiczna + Wpływ Dopaminy na Strach
+        # Wysoka D = mniejsza wrażliwość na strach. Niska D = wysoka wrażliwość.
+        d_sensitivity = 2.0 - self.dopamine # 1.0 (przy D=1.0) do 1.95 (przy D=0.05)
+        ta_inertia = (1.0 + (self.mood_tv * self.PHI)) / d_sensitivity
 
         self.mood_ta = calc_mood(self.mood_ta, tv.affective, 1.0 / ta_inertia)
         self.mood_tc = calc_mood(self.mood_tc, tv.cognitive)
 
-        # ── BLOKADA STANU UMYSŁU (Logika vs Afekt) ──
-        # Jeśli afekt jest b. wysoki, a dopamina niska -> Logika się blokuje
-        if self.mood_ta > 0.75 and self.dopamine < 0.35:
-            self.mood_tc *= 0.5 # Gwałtowny spadek/blokada logiki
+        # Blokada Logiki: Jeśli Ta jest b. wysokie (strach), logika Tc cierpi niezależnie od D
+        if self.mood_ta > 0.8:
+            self.mood_tc *= 0.7 
 
-        # Tv reaguje nieliniowo, ale w stresie (wysokie Ta) jego znaczenie spada
+        # Tv reaguje na wartości, ale w afekcie jego głos jest słabszy
         boosted_tv_input = tv.axiological ** 0.5
-        if self.mood_ta > 0.85:
-            boosted_tv_input *= 0.6 # Wartości tracą znaczenie, gdy dominuje afekt
+        if self.mood_ta > 0.7:
+            boosted_tv_input *= (1.0 - self.mood_ta * 0.5)
 
         self.mood_tv = calc_mood(self.mood_tv, boosted_tv_input)
 
-        # ── 2. Obliczanie Spójności (C) - Meta-Parametr ──
-        # C = PHI - |(Ta * Tc) - Tv| -> dążymy do rezonansu między tym co czujemy a wartościami
+        # ── 2. Obliczanie Spójności (C) ──
         dissonance = abs((self.mood_ta * self.mood_tc) - self.mood_tv)
         old_cohesion = self.coherence
-        self.coherence = max(0.05, min(1.0, self.INV_PHI - dissonance + 0.382)) # 0.382 = PHI - 1.236... offset
+        self.coherence = max(0.05, min(1.0, self.INV_PHI - dissonance + 0.382))
 
-        # ── 3. Ekonomia Dopaminy (Paliwo i Nagroda) ──
-        # A. Bazowe zużycie (koszt myślenia)
-        effort = self.mood_tc * self.COGNITIVE_COST
-        if self.coherence < self.INV_PHI:
-            effort *= 1.5 # Wyższy koszt przy braku spójności (tarcie)
+        # ── 3. Ekonomia Dopaminy (Bez przebaczenia) ──
+        # A. Koszt (Metabolizm + Wysiłek + Tarcie)
+        friction = 2.5 if self.coherence < self.INV_PHI else 1.0
+        effort = (self.METABOLIC_COST + (self.mood_tc * self.COGNITIVE_COST)) * friction
         
-        # B. Nagroda (D_gain) za wzrost spójności i gęstość sensu
+        # B. Nagroda (Trudno dostępna)
+        learning_bonus = (self.mood_tc * 0.02) if self.coherence > 0.9 else 0
         c_gain = max(0, self.coherence - old_cohesion)
-        meaning_density = (self.mood_ta * self.mood_tc) ** (self.mood_tv + 0.1)
-        reward = (c_gain * self.PHI) + (meaning_density * 0.12)
+        # Nagroda za sens wymaga wysokiego Tv (wartości)
+        meaning_density = (self.mood_ta * self.mood_tc) * self.mood_tv
+        reward = (c_gain * 0.2) + (meaning_density * 0.05) + learning_bonus
         
-        # C. Homeostaza (dryf w stronę INV_PHI)
-        drift = (self.INV_PHI - self.dopamine) * 0.1
+        # C. Homeostaza (Ekstremalnie silny dryf do 0.618)
+        drift = (self.INV_PHI - self.dopamine) * 0.4
         
         self.dopamine = max(0.05, min(1.0, self.dopamine - effort + reward + drift))
+
+        # ── KATARZIS DYNAMICZNA (Minimalna i rzadka) ──
+        # Tylko przy euforii (D > 0.8) i realnym sukcesie kognitywnym
+        if self.dopamine > 0.8 and reward > 0.1:
+            relief_factor = 0.95 # Tylko 5% spadku napięcia
+            self.mood_ta *= relief_factor
+            self.mood_tc *= relief_factor
+            self.mood_tv *= relief_factor
+
+        # ── LĘK PRZED PUSTKĄ ──
+        if self.dopamine < 0.35:
+            self.mood_ta = min(1.0, self.mood_ta + (0.35 - self.dopamine) * 0.05)
 
         # ── 4. Mechanizm Resetu Synaptycznego ──
         if self.coherence < 0.2:

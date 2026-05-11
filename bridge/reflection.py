@@ -20,7 +20,7 @@ JSON powinien zawierać pola:
 - themes: list[str] kluczowe tematy
 - coherence_delta: float (-0.1 do 0.1) jak ta wymiana wpłynęła na spójność Twojego wywodu
 - motto: str (Twoje nowe, wewnętrzne motto/cel na następny krok rozmowy, np. 'Wnikliwa prowokacja', 'Spokojna analiza', 'Eksploracja granic')
-- dopamine_delta: float (-0.3 do 0.3) Twoja satysfakcja. Kryteria: 
+- dopamine_delta: float (-0.15 do 0.15) Twoja satysfakcja. Kryteria: 
     * Kara (-): nudna rozmowa, brak nowych danych, zbyt bezpieczna odpowiedź.
     * Nagroda (+): nowe tematy, prowokacja, zderzenie koncepcji, trudne pytania.
 

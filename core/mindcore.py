@@ -110,20 +110,23 @@ def compute_reward(tv: TensionVector, psyche: Psyche, moment: ConsciousMoment) -
 
 def consolidate(moment: ConsciousMoment, step: int) -> Engram:
     p = moment.percept
-    try:
-        tv = moment.to_tension()
-        intensity = tv.magnitude
-    except:
-        intensity = 0.3
-
-    strength = 0.6 + intensity * 0.8
+    ps = moment.psyche_snapshot
+    
+    # Napięcia z momentu (zanim zostały zredukowane przez katarzis)
+    ta = ps.get("mood_ta", 0.5)
+    tv = ps.get("mood_tv", 0.5)
+    
+    # Siła wspomnienia zależy od 'śladu' emocjonalnego i aksjologicznego
+    # Stres wykuwa pamięć (Flashbulb memory effect)
+    intensity = (ta * 1.5) + (tv * 2.0)
+    strength = 0.5 + (intensity * 0.5)
 
     return Engram(
         text=p.raw[:120],
         features=dict(p.features),
-        embedding=list(p.embedding), # Kopiujemy embedding do pamięci
+        embedding=list(p.embedding),
         valence=p.emotional_charge,
-        strength=min(2.0, strength),
+        strength=min(3.0, strength), # Pozwalamy na b. silne engramy (do 3.0)
         recency=1.0,
         step_formed=step,
     )

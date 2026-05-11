@@ -33,21 +33,24 @@ class ConsciousMoment:
 
         p = self.percept
 
-        # Wzmocnienie echa emocjonalnego
-        emotional_echo = (
-            sum(abs(e.valence) for e in self.engrams) / max(1, len(self.engrams))
-        ) * (0.3 + A * 0.7)
+        # ── REZONANS ASOCJACYJNY (Pamięć jako bodziec) ──
+        # Engramy nie tylko "echo" — one pompują napięcie
+        memory_affect = sum(e.salience * abs(e.valence) for e in self.engrams)
+        memory_values = sum(e.salience for e in self.engrams if abs(e.valence) > 0.6)
 
-        # Afekt: reakcja na bodziec pomnozona przez wage 'ciezaru'
-        t_a = abs(p.emotional_charge) * (2.0 - S) + emotional_echo
+        # Afekt (Ta): Bodziec + Pamięć. Jeśli Dopamina (z psyche_snapshot) jest niska, efekt jest 2x silniejszy
+        dopamine = self.psyche_snapshot.get("dopamine", 0.5)
+        d_factor = 1.5 - dopamine # Niska dopamina = wysoka wrażliwość na strach/afekt
+        
+        t_a = (abs(p.emotional_charge) + memory_affect) * (2.0 - S) * d_factor
         t_a = min(1.0, t_a)
 
-        # Cognitive: gęstość informacyjna vs spójność
-        t_c = p.semantic_density * (1.8 - C)
+        # Logika (Tc): Bodziec informacyjny, dość płaski, ale rośnie przy wysokim A
+        t_c = p.semantic_density * (1.5 - C) * (1.0 + A * 0.5)
         t_c = min(1.0, t_c)
 
-        # Wartosci: uderzenie w fundamenty
-        t_v = p.value_challenge * (2.2 - S)
+        # Wartości (Tv): Wyzwanie + Rezonans Aksjologiczny z pamięci
+        t_v = (p.value_challenge + memory_values * 0.5) * (2.2 - S)
         t_v = min(1.0, t_v)
 
         return TensionVector(

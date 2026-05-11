@@ -20,36 +20,32 @@ Aby system działał poprawnie, musisz mieć zainstalowaną aplikację **Ollama*
 
 ---
 
-## 🧠 Jak działa CogitOS? (Architektura Gravitational Core v3.5)
+## 🧠 Jak działa CogitOS? (Neural Resonance v3.6)
 
-CogitOS to dynamiczny system **Homeostatyczny**. W wersji v3.5 system przeszedł ewolucję z prostych reakcji na rzecz złożonych sprzężeń kognitywnych opartych na **Złotym Podziale ($\phi \approx 0.618$)**.
+CogitOS to system **Homeostatyczny**, w którym stan umysłu jest nierozerwalnie związany z pamięcią asocjacyjną.
 
-### 1. Spójność (C) - Meta-Parametr i "Tarcie"
-Spójność ($C$) pełni rolę nadrzędnego dyrygenta. Mierzy rezonans między emocjami ($Ta$), logiką ($Tc$) a wartościami ($Tv$).
-*   **Stan Flow**: Gdy $C \approx 0.618$, system myśli najefektywniej przy minimalnym zużyciu energii.
-*   **Tarcie (Friction)**: Gdy $C < 0.35$, dashboard w przeglądarce zaczyna fizycznie drżeć, sygnalizując dysonans i stres kognitywny.
+### 1. Pamięć jako Bodziec (Neural Resonance)
+*   **Rezonans Asocjacyjny**: Engramy (wspomnienia) nie są tylko danymi. Każde przywołane wspomnienie "pompuje" napięcie Afektu ($Ta$) lub Wartości ($Tv$) zgodnie ze swoim ładunkiem.
+*   **Pamięć Wykuta w Stresie**: Im wyższe napięcie w momencie tworzenia wspomnienia, tym jest ono silniejsze i trudniejsze do wyparcia. Stres "wykuwa" trwałe ślady pamięciowe.
 
-### 2. Ekonomia Dopaminy (Brak darmowej nagrody)
-Dopamina przestała być darmowa — system musi na nią zapracować.
-*   **Koszt Myślenia**: Każda głęboka analiza ($Tc$) zużywa zapas Dopaminy. Im większy stres ($C$), tym koszt jest wyższy.
-*   **Nagroda (Reward)**: System otrzymuje "strzał" dopaminy tylko za wzrost spójności (rozwiązanie problemu) oraz wysoką gęstość sensu w swoich wypowiedziach.
+### 2. Ekonomia Dopaminy (Bez przebaczenia)
+*   **Koszt Bytowania**: System posiada wysoki koszt bazowy. Brak stymulacji prowadzi do apati i spadku dopaminy.
+*   **Lęk przed Pustką**: Gdy dopamina spada poniżej 0.35, system wpada w stan niepokoju — Afekt ($Ta$) rośnie samoistnie, symulując lęk kognitywny.
+*   **Satysfakcja z Wiedzy**: Praca intelektualna ($Tc$) daje niewielkie bonusy dopaminowe, ale tylko przy zachowaniu wysokiej spójności.
 
-### 3. Grawitacja Wartości i Inercja Aksjologiczna
-Wartości ($Tv$) działają jak masa kognitywna systemu:
-*   **Inercja**: Wysokie $Tv$ sprawia, że Afekt ($Ta$) reaguje wolniej i stabilniej (trudniej "rozhuśtać" system).
-*   **Integrysta**: Silna Logika ($Tc$) dodatkowo wzmacnia "ciężar" Wartości, czyniąc system niemal niewzruszonym na manipulację.
+### 3. Dynamika Napięć
+*   **Asymetria**: Napięcia rosną błyskawicznie w odpowiedzi na bodźce i pamięć, ale opadają bardzo powoli ($Decay=0.96$).
+*   **Blokada Strachu**: Wysoka Dopamina tłumi lęk, ale skrajny Afekt ($Ta > 0.8$) paraliżuje logikę ($Tc$) niezależnie od nagrody.
 
-### 4. Blokady Stanu Umysłu (Stress Response)
-System posiada nieliniowe mechanizmy obronne:
-*   **Emotional Takeover**: Przy skrajnie wysokim Afekcie ($Ta$) i niskiej Dopaminie, Logika ($Tc$) ulega "zamrożeniu" (spadek o 50%). System przestaje myśleć racjonalnie.
-*   **Erozja Zasad**: W stanie ekstremalnego wzburzenia, Wartości ($Tv$) tracą swój wpływ na system — instynkt bierze górę nad etyką.
+### 4. Katarzis (Rzadka i Trudna)
+Ulga kognitywna (spadek napięcia) następuje tylko przy wyjątkowo silnych nagrodach dopaminowych i wysokiej spójności. System nie "zapomina" o problemach bez ich realnego rozwiązania.
 
-### 5. Reset Synaptyczny (Katharsis)
-Jeśli system zbyt długo przebywa w stanie skrajnego dysonansu ($C < 0.2$), następuje automatyczny **Reset Synaptyczny**. Faza zmienia się w **Katharsis**, dopamina zostaje wyczerpana, a parametry wracają do bazy, by zapobiec trwałej niestabilności.
+### 6. Reset Synaptyczny (Katharsis)
+Automatyczna procedura ratunkowa przy długotrwałym braku spójności ($C < 0.2$). Powoduje wyczerpanie dopaminy i powrót parametrów do stanu bazowego.
 
 ---
 
-### 6. Pętla Kognitywna i Pamięć
+### 7. Pętla Kognitywna i Pamięć
 1.  **Appercepcja (System 1):** Podprogowa ocena semantyczna wejścia.
 2.  **Rezonans Pamięci (RAG):** Automatyczne przywoływanie engramów na podstawie podobieństwa embeddingów.
 3.  **Autogenna Refleksja (System 2):** Samodzielna ocena jakości wygenerowanej odpowiedzi i przyznanie nagrody dopaminowej.

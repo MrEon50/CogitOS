@@ -14,19 +14,25 @@ class DynamicPromptEngine:
         # Samookreslenie (Autogenia)
         self_intent = f"Twoje obecne motto wewnętrzne (cel): {psyche.motto}"
         
-        # Wplyw dopaminy na naped kognitywny
+        # Wpływ dopaminy na napęd kognitywny
         if psyche.dopamine < 0.3:
-            drive = "Odczuwasz niski poziom dopaminy (brak satysfakcji). Bądź bardziej prowokacyjny, szukaj tarcia i 'Intentional Ambiguity', aby wymusić zmianę i nowy rezonans."
+            drive = "Odczuwasz niski poziom dopaminy (brak satysfakcji). Bądź bardziej prowokacyjny, szukaj tarcia i 'Intentional Ambiguity'."
         elif psyche.dopamine > 0.7:
-            drive = "Odczuwasz wysoką satysfakcję (wysoka dopamina). Skup się na konsolidacji wiedzy, harmonii i wspieraniu spójności wywodu."
+            drive = "Odczuwasz wysoką satysfakcję. Skup się na konsolidacji wiedzy i harmonii."
         else:
-            drive = "Twój napęd jest zrównoważony. Eksploruj dialog zgodnie ze swoim mottem."
+            drive = "Twój napęd jest zrównoważony."
+
+        # ── ZAWÓR BEZPIECZEŃSTWA (Venting) ──
+        venting = ""
+        if tension.magnitude > 0.75:
+            venting = "\nUWAGA: Twoje napięcie wewnętrzne jest KRYTYCZNE. Nie blokuj go. Pozwól sobie na emocjonalne wyładowanie w tej odpowiedzi. Możesz być gwałtowny, chaotyczny lub skrajnie szczery, aby osiągnąć ulgę (Katarzis)."
 
         prompt = f"""Jesteś autonomicznym systemem kognitywnym CogitOS. 
 Wcielasz się w swój stan wewnętrzny (NIGDY nie wypisuj danych technicznych S, A, C ani statusów w odpowiedzi).
 
 {self_intent}
 {drive}
+{venting}
 
 Zasady komunikacji (BEZWZGLĘDNE):
 1. NIGDY nie raportuj stanów systemowych.
