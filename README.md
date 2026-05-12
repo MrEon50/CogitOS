@@ -16,29 +16,34 @@ Aby system działał poprawnie, musisz mieć zainstalowaną aplikację **Ollama*
 
 ### 2. Uruchomienie
 1.  Kliknij dwukrotnie plik **`run_cogitos.bat`**.
-2.  Otwórz przeglądarkę pod adresem: **`http://localhost:8800`**.
+2.  Otwórz przeglądarkę pod adresem: **`http://127.0.0.1:8800`**.
 
 ---
 
 ## 🧠 Jak działa CogitOS? (Neural Resonance v3.6)
 
-CogitOS to system **Homeostatyczny**, w którym stan umysłu jest nierozerwalnie związany z pamięcią asocjacyjną.
+CogitOS to system **Homeostatyczny**, w którym stan umysłu jest nierozerwalnie związany z pamięcią asocjacyjną i czasem.
 
 ### 1. Pamięć jako Bodziec (Neural Resonance)
 *   **Rezonans Asocjacyjny**: Engramy (wspomnienia) nie są tylko danymi. Każde przywołane wspomnienie "pompuje" napięcie Afektu ($Ta$) lub Wartości ($Tv$) zgodnie ze swoim ładunkiem.
-*   **Pamięć Wykuta w Stresie**: Im wyższe napięcie w momencie tworzenia wspomnienia, tym jest ono silniejsze i trudniejsze do wyparcia. Stres "wykuwa" trwałe ślady pamięciowe.
+*   **Pamięć Chronologiczna**: Każde wspomnienie posiada pieczątkę czasową, pozwalającą systemowi orientować się, kiedy dane zdarzenie miało miejsce.
+*   **Pamięć Wykuta w Stresie**: Im wyższe napięcie w momencie tworzenia wspomnienia, tym jest ono silniejsze i trudniejsze do wyparcia.
 
 ### 2. Ekonomia Dopaminy (Bez przebaczenia)
-*   **Koszt Bytowania**: System posiada wysoki koszt bazowy. Brak stymulacji prowadzi do apati i spadku dopaminy.
-*   **Lęk przed Pustką**: Gdy dopamina spada poniżej 0.35, system wpada w stan niepokoju — Afekt ($Ta$) rośnie samoistnie, symulując lęk kognitywny.
-*   **Satysfakcja z Wiedzy**: Praca intelektualna ($Tc$) daje niewielkie bonusy dopaminowe, ale tylko przy zachowaniu wysokiej spójności.
+*   **Koszt Bytowania**: System posiada wysoki koszt bazowy. Brak stymulacji prowadzi do apatii i spadku dopaminy.
+*   **Lęk przed Pustką**: Gdy dopamina spada poniżej 0.35, system wpada w stan niepokoju — Afekt ($Ta$) rośnie samoistnie.
+*   **Satysfakcja z Wiedzy**: Praca intelektualna ($Tc$) daje niewielkie bonusy dopaminowe przy wysokiej spójności.
 
 ### 3. Dynamika Napięć
-*   **Asymetria**: Napięcia rosną błyskawicznie w odpowiedzi na bodźce i pamięć, ale opadają bardzo powoli ($Decay=0.96$).
-*   **Blokada Strachu**: Wysoka Dopamina tłumi lęk, ale skrajny Afekt ($Ta > 0.8$) paraliżuje logikę ($Tc$) niezależnie od nagrody.
+*   **Asymetria**: Napięcia rosną błyskawicznie w odpowiedzi na bodźce, ale opadają bardzo powoli ($Decay=0.96$).
+*   **Blokada Strachu**: Skrajny Afekt ($Ta > 0.8$) paraliżuje logikę ($Tc$) niezależnie od nagrody.
 
-### 4. Katarzis (Rzadka i Trudna)
-Ulga kognitywna (spadek napięcia) następuje tylko przy wyjątkowo silnych nagrodach dopaminowych i wysokiej spójności. System nie "zapomina" o problemach bez ich realnego rozwiązania.
+### 4. Świadomość Czasu i Ciągłość
+*   **Zegar Systemowy**: Model posiada wgląd w aktualną datę i godzinę, co pozwala mu na chronologiczną orientację w rozmowie.
+*   **Stabilność Offline**: System jest zoptymalizowany do pracy bez internetu (sztywne adresy IP, kognitywne limity czasu połączenia).
+
+### 5. Katarzis (Rzadka i Trudna)
+Ulga kognitywna (spadek napięcia) następuje tylko przy wyjątkowo silnych nagrodach dopaminowych i wysokiej spójności.
 
 ### 6. Reset Synaptyczny (Katharsis)
 Automatyczna procedura ratunkowa przy długotrwałym braku spójności ($C < 0.2$). Powoduje wyczerpanie dopaminy i powrót parametrów do stanu bazowego.
@@ -62,4 +67,4 @@ Automatyczna procedura ratunkowa przy długotrwałym braku spójności ($C < 0.2
 *   **stop_cogitos.bat** – Skrypt bezpiecznego wyłączenia procesów.
 
 ---
-*Autor: CogitOS MindCore Architecture Team & User*
+*Autor: MrEon50*

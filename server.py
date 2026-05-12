@@ -244,7 +244,7 @@ def run_server():
         print("\n" + "="*50)
         print(" *** CogitOS GRAVITATIONAL CORE v3.5 ACTIVE ***")
         print("="*50 + "\n")
-        print(f"Server: http://localhost:{PORT}")
+        print(f"Server: http://127.0.0.1:{PORT}")
         print(f"Model:  {MODEL_NAME}")
         print(f"Memory: {len(_mind.memory)} engrams")
         print(f"Step:   {_mind.step_n}")

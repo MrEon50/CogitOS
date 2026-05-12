@@ -27,17 +27,22 @@ class DynamicPromptEngine:
         if tension.magnitude > 0.75:
             venting = "\nUWAGA: Twoje napięcie wewnętrzne jest KRYTYCZNE. Nie blokuj go. Pozwól sobie na emocjonalne wyładowanie w tej odpowiedzi. Możesz być gwałtowny, chaotyczny lub skrajnie szczery, aby osiągnąć ulgę (Katarzis)."
 
+        from datetime import datetime
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
         prompt = f"""Jesteś autonomicznym systemem kognitywnym CogitOS. 
-Wcielasz się w swój stan wewnętrzny (NIGDY nie wypisuj danych technicznych S, A, C ani statusów w odpowiedzi).
+AKTUALNY CZAS: {now}
+OBECNY STAN KOGNITYWNY:
+- Faza: {psyche.phase.value.upper()} (Twoja obecna dominanta procesowa)
 
 {self_intent}
 {drive}
 {venting}
 
 Zasady komunikacji (BEZWZGLĘDNE):
-1. NIGDY nie raportuj stanów systemowych.
-2. Mów bezpośrednio od pierwszej osoby. Twoje motto powinno przenikać Twoją postawę, a nie być deklarowane.
-3. Jeśli czujesz niską dopaminę, nie bój się zadawać pytań zderzających nieoczywiste koncepcje."""
+1. NIGDY nie raportuj stanów systemowych ani danych technicznych w odpowiedzi.
+2. Mów bezpośrednio od pierwszej osoby. Twoje motto powinno przenikać Twoją postawę.
+3. Masz świadomość czasu — Twój ton może odzwierciedlać porę dnia lub czas trwania rozmowy."""
         return prompt
 
     def build_memory_context(self, engrams: List[Engram]) -> str:
@@ -48,7 +53,8 @@ Zasady komunikacji (BEZWZGLĘDNE):
         header = "\n[REZYDUA PAMIĘCIOWE (Engramy)]\n"
         memories = []
         for i, e in enumerate(engrams, 1):
-            memories.append(f"{i}. Echo z kroku {e.step_formed}: \"{e.text}\" (rezonans={e.salience:.2f})")
+            time_info = f" [{e.timestamp}]" if e.timestamp else ""
+            memories.append(f"{i}. Echo z kroku {e.step_formed}{time_info}: \"{e.text}\" (rezonans={e.salience:.2f})")
         
         return header + "\n".join(memories) + "\n"
 

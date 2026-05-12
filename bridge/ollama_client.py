@@ -7,7 +7,7 @@ class OllamaClient:
     """
     Klient HTTP dla Ollama API (bez zewnętrznych zależności).
     """
-    def __init__(self, base_url: str = "http://localhost:11434"):
+    def __init__(self, base_url: str = "http://127.0.0.1:11434"):
         self.base_url = base_url
 
     def embed(self, text: str, model: str = "mxbai-embed-large") -> List[float]:
@@ -18,7 +18,7 @@ class OllamaClient:
         try:
             req = urllib.request.Request(url, data=data, method="POST")
             req.add_header("Content-Type", "application/json")
-            with urllib.request.urlopen(req, timeout=10) as response:
+            with urllib.request.urlopen(req, timeout=5.0) as response:
                 resp_data = json.loads(response.read().decode("utf-8"))
                 # mxbai-embed-large zwraca listę list w 'embeddings'
                 return resp_data.get("embeddings", [[]])[0]
@@ -44,7 +44,7 @@ class OllamaClient:
             if stream:
                 return self._handle_stream(req)
             else:
-                with urllib.request.urlopen(req, timeout=60) as response:
+                with urllib.request.urlopen(req, timeout=25.0) as response:
                     resp_data = json.loads(response.read().decode("utf-8"))
                     return resp_data.get("message", {}).get("content", "")
         except Exception as e:

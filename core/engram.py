@@ -16,6 +16,7 @@ class Engram:
     strength: float = 1.0
     recency: float = 1.0
     step_formed: int = 0
+    timestamp: str = ""
 
     DECAY_RATE: float = 0.92
     REINFORCE_GAIN: float = 0.15

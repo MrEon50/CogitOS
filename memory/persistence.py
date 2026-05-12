@@ -37,7 +37,8 @@ class StateManager:
                     "valence": e.valence,
                     "strength": e.strength,
                     "recency": e.recency,
-                    "step_formed": e.step_formed
+                    "step_formed": e.step_formed,
+                    "timestamp": e.timestamp
                 } for e in mind.memory._store
             ]
         }
@@ -80,7 +81,8 @@ class StateManager:
                     valence=e_data["valence"],
                     strength=e_data["strength"],
                     recency=e_data["recency"],
-                    step_formed=e_data["step_formed"]
+                    step_formed=e_data["step_formed"],
+                    timestamp=e_data.get("timestamp", "")
                 )
                 mind.memory._store.append(eng)
 
