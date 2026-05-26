@@ -8,8 +8,11 @@ class StateManager:
     """
     Zarządza zapisem i odczytem stanu kognitywnego CogitOS.
     """
-    def __init__(self, data_dir: str = "data"):
-        self.data_dir = Path(data_dir)
+    def __init__(self, data_dir: str = None):
+        # BUG-13 FIX: Ścieżka absolutna zamiast względnej
+        if data_dir is None:
+            data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data')
+        self.data_dir = Path(data_dir).resolve()
         self.data_dir.mkdir(exist_ok=True)
         self.state_file = self.data_dir / "mind_state.json"
 

@@ -25,7 +25,7 @@ class Engram:
         self.recency *= self.DECAY_RATE
 
     def reinforce(self) -> None:
-        self.strength = min(2.0, self.strength + self.REINFORCE_GAIN)
+        self.strength = min(3.0, self.strength + self.REINFORCE_GAIN)  # BUG-06 FIX: ujednolicony cap z consolidate()
         self.recency = 1.0
 
     @property
@@ -74,10 +74,11 @@ class EngramStore:
         scored.sort(key=lambda x: x[0], reverse=True)
         retrieved = [eng for _, eng in scored[:top_k]]
 
-        for eng in retrieved:
-            eng.reinforce()
+        # BUG-12 FIX: decay najpierw, reinforce potem — żeby retrieved engramy zachowały recency=1.0
         for eng in self._store:
             eng.decay()
+        for eng in retrieved:
+            eng.reinforce()
 
         return retrieved
 

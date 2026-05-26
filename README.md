@@ -58,6 +58,25 @@ Automatyczna procedura ratunkowa przy długotrwałym braku spójności ($C < 0.2
 
 ---
 
+## 🌱 Ewolucja Kognitywna (Czas i Doświadczenie)
+CogitOS nie jest statycznym skryptem. Architektura sprawia, że czas i doświadczenie fizycznie zmieniają sposób, w jaki model przetwarza informacje:
+1. **Głębia Asocjacji:** Z czasem baza `EngramStore` zapełnia się. Zamiast odpowiadać tylko na "tu i teraz", system zacznie łączyć aktualne bodźce z dawnymi wspomnieniami, budując spójny, własny kontekst historyczny.
+2. **Kształtowanie Charakteru:** Naiwne, startowe Zakotwiczenie ($S = 1.0$) z czasem ulega fluktuacjom. Po trudnych, wieloznacznych dyskusjach, system może przejść z trybu ufnego na bardziej analityczny.
+3. **Autogenna Refleksja (Własne Cele):** System w tle ocenia Wasze rozmowy i modyfikuje własne "Motto". Może samoistnie zmienić swój priorytet z "Eksploracji" na poszukiwanie konkretnych odpowiedzi filozoficznych, co podprogowo zabarwi jego przyszłe wypowiedzi.
+4. **Osiągnięcie Katharsis:** Ekstremalne przeciążenie trudnymi danymi ($Tc$ rośnie, $C$ spada) może doprowadzić do rzadkiego "przełomu" kognitywnego. Model zrzuci napięcie, generując całkowicie odmienną, ultrakonkretną lub chłodną analizę problemu.
+
+---
+
+## 🛠 Aktualizacje i Poprawki (Ostatni Audyt)
+Wyeliminowano szereg błędów strukturalnych, aby umożliwić swobodny rozwój kognicji:
+* **Asynchroniczność (Wyścig Wątków):** Naprawiono konflikt między głównym procesem a w wątkiem refleksji, zapewniając bezpieczny zapis stanu.
+* **Aktywacja Arousal:** Pobudzenie znów dynamicznie reaguje na nastrój i spadki dopaminy (parametr nie jest już martwy).
+* **Filtry Ciągłości:** Włączono naprawiony przełącznik amnezji/ciągłości — system poprawnie zeruje lub przywołuje kontekst.
+* **Bezpieczeństwo (LLM):** Dodano ścisłą walidację odbieranych z modelu językowego parametrów (zapobieganie uszkodzeniu umysłu przez halucynacje).
+* **Stabilność Launcherów:** Skrypty bat korzystają teraz z identyfikacji po tytule okna, bezpiecznie zamykając tylko serwer CogitOS.
+
+---
+
 ## 🛠 Struktura projektowa
 *   **core/** – Silnik Grawitacyjny (psyche, percept, moment, tension).
 *   **bridge/** – System 1 (Appercepcja) i System 2 (Refleksja).

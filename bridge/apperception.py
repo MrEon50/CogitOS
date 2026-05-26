@@ -1,6 +1,14 @@
 import json
 from bridge.ollama_client import OllamaClient
 
+def _clamp(val, lo, hi, default=0.0):
+    """BUG-09 FIX: Bezpieczne rzutowanie i clampowanie wartości z LLM."""
+    try:
+        v = float(val)
+        return max(lo, min(hi, v))
+    except (TypeError, ValueError):
+        return default
+
 class ApperceptionService:
     """
     System 1 (Podświadomość).
@@ -55,9 +63,9 @@ Tekst: "{text}"
 
             data = json.loads(clean)
             return {
-                "emotional_charge": float(data.get("emotional_charge", 0.0)),
-                "semantic_density": float(data.get("semantic_density", 0.2)),
-                "value_challenge": float(data.get("value_challenge", 0.0))
+                "emotional_charge": _clamp(data.get("emotional_charge"), -1.0, 1.0),
+                "semantic_density": _clamp(data.get("semantic_density"), 0.0, 1.0, 0.2),
+                "value_challenge":  _clamp(data.get("value_challenge"), 0.0, 1.0)
             }
         except Exception:
             # Fallback w razie błędnego JSONa od modelu

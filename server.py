@@ -26,12 +26,39 @@ _apperceptor = ApperceptionService()
 _lock = threading.Lock()  # Ochrona przed wyscigiem watkow
 _chat_history = []        # Historia sesji (user/assistant) dla kontekstu
 
+# BUG-01 FIX: Kolejka refleksji — nowy step czeka aż poprzednia refleksja się zakończy
+class _ReflectionGate:
+    """Zapewnia że refleksja z kroku N zakończy się przed krokiem N+1."""
+    def __init__(self):
+        self._done = threading.Event()
+        self._done.set()  # Na starcie brak oczekującej refleksji
+    def wait(self):
+        self._done.wait(timeout=20.0)  # Max 20s na refleksję
+    def mark_started(self):
+        self._done.clear()
+    def mark_done(self):
+        self._done.set()
+
+_reflection_gate = _ReflectionGate()
+
 
 class CogitOSHandler(http.server.BaseHTTPRequestHandler):
 
     def log_message(self, format, *args):
         """Cichy log - nie zasmiecamy konsoli."""
         pass
+
+    def do_OPTIONS(self):
+        """BUG-07/BUG-10 FIX: Obsługa preflight CORS requests."""
+        self.send_response(204)
+        self._send_cors_headers()
+        self.send_header('Content-Length', '0')
+        self.end_headers()
+
+    def _send_cors_headers(self):
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
 
     def do_GET(self):
         if self.path == '/':
@@ -97,6 +124,8 @@ class CogitOSHandler(http.server.BaseHTTPRequestHandler):
         embedding = _ollama.embed(user_input)
 
         # ── 2. Krok MindCore (z lockiem) ──
+        # BUG-01 FIX: Czekamy aż refleksja z poprzedniego kroku się zakończy
+        _reflection_gate.wait()
         with _lock:
             cognitive_ctx = _mind.step(user_input, embedding=embedding, continuity=continuity, apperception_data=apperception_data)
             p = _mind.psyche
@@ -128,6 +157,8 @@ class CogitOSHandler(http.server.BaseHTTPRequestHandler):
         self.send_header('Content-Type', 'text/event-stream; charset=utf-8')
         self.send_header('Cache-Control', 'no-cache')
         self.send_header('Connection', 'keep-alive')
+        self._send_cors_headers()  # BUG-07 FIX
+        self.send_header('X-Accel-Buffering', 'no')  # BUG-07 FIX: kompatybilność z reverse proxy
         self.end_headers()
 
         # Wyslij stan kognitywny
@@ -172,7 +203,12 @@ class CogitOSHandler(http.server.BaseHTTPRequestHandler):
         response_text = "".join(full_response)
         _chat_history.append({"role": "user", "content": user_input})
         _chat_history.append({"role": "assistant", "content": response_text})
+        # BUG-14 FIX: Ograniczenie rozmiaru historii
+        if len(_chat_history) > 30:
+            _chat_history[:] = _chat_history[-20:]
 
+        # BUG-01 FIX: Sygnalizujemy start refleksji
+        _reflection_gate.mark_started()
         threading.Thread(
             target=self._finalize_step,
             args=(user_input, response_text, model),
@@ -203,6 +239,9 @@ class CogitOSHandler(http.server.BaseHTTPRequestHandler):
                     
             except Exception as e:
                 print(f"Blad refleksji: {e}")
+            finally:
+                # BUG-01 FIX: Sygnalizujemy koniec refleksji
+                _reflection_gate.mark_done()
 
             _state_manager.save_all(_mind)
 
@@ -234,6 +273,7 @@ class CogitOSHandler(http.server.BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-Type', 'application/json; charset=utf-8')
         self.send_header('Content-Length', str(len(body)))
+        self._send_cors_headers()  # BUG-07 FIX
         self.end_headers()
         self.wfile.write(body)
 

@@ -38,7 +38,21 @@ Przykład: {{"valence": 0.2, "themes": ["logika"], "motto": "Głębokie zrozumie
             start = analysis.find("{")
             end = analysis.rfind("}") + 1
             if start != -1 and end != 0:
-                return json.loads(analysis[start:end])
+                raw = json.loads(analysis[start:end])
+                # BUG-09 FIX: Walidacja zakresów wartości z LLM
+                def _clamp(val, lo, hi, default=0.0):
+                    try:
+                        v = float(val)
+                        return max(lo, min(hi, v))
+                    except (TypeError, ValueError):
+                        return default
+                return {
+                    "valence": _clamp(raw.get("valence"), -1.0, 1.0),
+                    "themes": raw.get("themes", []) if isinstance(raw.get("themes"), list) else [],
+                    "coherence_delta": _clamp(raw.get("coherence_delta"), -0.1, 0.1),
+                    "motto": str(raw.get("motto", "Eksploracja bieżąca"))[:80],
+                    "dopamine_delta": _clamp(raw.get("dopamine_delta"), -0.15, 0.15),
+                }
         except Exception as e:
             print(f"Błąd refleksji: {e}")
             

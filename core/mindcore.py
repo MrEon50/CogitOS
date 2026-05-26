@@ -26,9 +26,10 @@ class MindCore:
         all_engrams = self.memory.retrieve(percept, self.psyche, top_k=3)
         
         if not continuity:
-            # Filtrujemy engramy: zostawiamy tylko te z biezacej sesji (step_n)
-            # Lub po prostu ograniczamy retrieval do zera, jesli chcemy calkowitej amnezji wstecznej
-            engrams = [e for e in all_engrams if e.step_formed >= self.step_n]
+            # BUG-04 FIX: Tryb bez ciągłości = czysta amnezja wsteczna
+            # (Poprzednio filtr `step_formed >= self.step_n` był zawsze pusty,
+            #  bo step_n jest już zinkrementowany, a nowy engram jeszcze nie istnieje)
+            engrams = []
         else:
             engrams = all_engrams
 

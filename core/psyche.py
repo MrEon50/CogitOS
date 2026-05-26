@@ -62,6 +62,11 @@ class Psyche:
         if self.mood_ta > 0.8:
             self.mood_tc *= 0.7 
 
+        # [BUG-02 FIX] Aktualizacja Arousal — dynamiczne pobudzenie
+        self.arousal = min(1.0, max(0.0,
+            self.mood_ta * 0.6 + self.mood_tc * 0.3 + (1.0 - self.dopamine) * 0.1
+        ))
+
         # Tv reaguje na wartości, ale w afekcie jego głos jest słabszy
         boosted_tv_input = tv.axiological ** 0.5
         if self.mood_ta > 0.7:
@@ -113,7 +118,6 @@ class Psyche:
         else:
             self._reset_counter = max(0, self._reset_counter - 1)
             
-        # ── 5. Określanie Fazy ──
         # ── 5. Zakotwiczenie (Anchor/S) ──
         if tv.axiological > 0.5:
             self.anchor = max(0.0, self.anchor - (tv.axiological - 0.5) * 0.05)
@@ -124,6 +128,11 @@ class Psyche:
         if self.phase != Phase.KATHARSIS:
             if tv.magnitude > 0.6: self.phase = Phase.TENSION
             else: self.phase = Phase.HARMONY
+
+        # ── 7. Historia (BUG-03 FIX) ──
+        self._history.append(self.coherence)
+        if len(self._history) > 10:
+            self._history = self._history[-10:]
         
         return self.phase
 
