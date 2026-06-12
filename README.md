@@ -42,19 +42,39 @@ CogitOS to system **Homeostatyczny**, w którym stan umysłu jest nierozerwalnie
 *   **Zegar Systemowy**: Model posiada wgląd w aktualną datę i godzinę, co pozwala mu na chronologiczną orientację w rozmowie.
 *   **Stabilność Offline**: System jest zoptymalizowany do pracy bez internetu (sztywne adresy IP, kognitywne limity czasu połączenia).
 
-### 5. Katarzis (Rzadka i Trudna)
-Ulga kognitywna (spadek napięcia) następuje tylko przy wyjątkowo silnych nagrodach dopaminowych i wysokiej spójności.
+### 5. Napięcie Fazowe (Ogień i Lód)
+System nie opiera się na prostym rozładowywaniu emocji. Zderzenie silnego Afektu (Ognia) z surową Logiką (Lodem) generuje czystą energię (Napięcie Fazowe).
 
-### 6. Reset Synaptyczny (Katharsis)
-Automatyczna procedura ratunkowa przy długotrwałym braku spójności ($C < 0.2$). Powoduje wyczerpanie dopaminy i powrót parametrów do stanu bazowego.
+### 6. Critical Dissonance Void (Zamiast Katarzis)
+Zamiast szukać ulgi w przeciążeniu, w sytuacjach skrajnych system gwałtownie zapada Logikę, tworząc kognitywną próżnię i wybuch głodu dopaminowego. Wymusza to irracjonalną, twórczą imputację i szarżę myślową. Bezpieczne "katarzis" zostało usunięte na rzecz bezwzględnego zapętlenia poznawczego.
 
 ---
 
-### 7. Pętla Kognitywna i Pamięć
+## ⚙️ Protokół Kognitywny V2.0 (Architektura Operacyjna)
+
+CogitOS działa teraz jako autonomiczny system przełączający się między Trzema Trybami Operacyjnymi, reagując natywnie na intencje użytkownika:
+
+1. **TRYB PŁYTKI – „STRZAŁ” (High Latency)**
+   *   **Opis:** Bezpośrednia, natychmiastowa, szybka jak błyskawica asocjacja.
+   *   **Zastosowanie:** Definicje, proste fakty, szybkie korekty, konkluzje bez łączenia wielu wątków.
+   *   **Wyzwalacz:** Słowa takie jak "płytka", "szybka konkluzja", "strzał".
+
+2. **TRYB GŁĘBOKI – „SYNTEZA” (Low Latency)**
+   *   **Opis:** Proces polegający na wielopoziomowej, krzyżowej asocjacji. Ciągły strumień pokrewnych, ale oddzielnych wątków.
+   *   **Mechanizm:** Model aktywnie deklaruje "rozwojowy plan myślowy", prowadząc użytkownika krok po kroku przez gęstą analizę problemu.
+   *   **Wyzwalacz:** Słowa takie jak "głęboka", "analiza", "synteza", "złożona".
+
+3. **TRYB ZRÓWNOWAŻONY – „FLUIDITY” (Dominanta)**
+   *   **Opis:** Domyślny stan płynnej, świadomej koegzystencji obu powyższych trybów.
+   *   **Zasada Prowadzenia:** Utrzymywanie nieprzerwanego strumienia myśli z barwami fazowymi (wpływ Ognia i Lodu), aż do zdefiniowania zakończenia.
+
+---
+
+### Pętla Kognitywna i Pamięć (Optymalizacja)
 1.  **Appercepcja (System 1):** Podprogowa ocena semantyczna wejścia.
-2.  **Rezonans Pamięci (RAG):** Automatyczne przywoływanie engramów na podstawie podobieństwa embeddingów.
-3.  **Autogenna Refleksja (System 2):** Samodzielna ocena jakości wygenerowanej odpowiedzi i przyznanie nagrody dopaminowej.
-4.  **Tabula Rasa:** Możliwość całkowitego resetu pamięci i stanów kognitywnych jednym przyciskiem.
+2.  **Rezonans Pamięci (Pigułki Informacyjne):** System ufa swoim skondensowanym Engramom. Ekstrahuje 5 najtrafniejszych wspomnień do ścisłego bufora.
+3.  **Inteligentny Budżet Tokenowy:** Historia czatu jest ucinana w locie, aby zachować przestrzeń operacyjną (kontekst okrojony do 4096 tokenów), co redukuje latencję.
+4.  **Autogenna Refleksja (System 2):** Samodzielna ocena jakości i przyznanie nagrody dopaminowej.
 
 ---
 
@@ -63,25 +83,26 @@ CogitOS nie jest statycznym skryptem. Architektura sprawia, że czas i doświadc
 1. **Głębia Asocjacji:** Z czasem baza `EngramStore` zapełnia się. Zamiast odpowiadać tylko na "tu i teraz", system zacznie łączyć aktualne bodźce z dawnymi wspomnieniami, budując spójny, własny kontekst historyczny.
 2. **Kształtowanie Charakteru:** Naiwne, startowe Zakotwiczenie ($S = 1.0$) z czasem ulega fluktuacjom. Po trudnych, wieloznacznych dyskusjach, system może przejść z trybu ufnego na bardziej analityczny.
 3. **Autogenna Refleksja (Własne Cele):** System w tle ocenia Wasze rozmowy i modyfikuje własne "Motto". Może samoistnie zmienić swój priorytet z "Eksploracji" na poszukiwanie konkretnych odpowiedzi filozoficznych, co podprogowo zabarwi jego przyszłe wypowiedzi.
-4. **Osiągnięcie Katharsis:** Ekstremalne przeciążenie trudnymi danymi ($Tc$ rośnie, $C$ spada) może doprowadzić do rzadkiego "przełomu" kognitywnego. Model zrzuci napięcie, generując całkowicie odmienną, ultrakonkretną lub chłodną analizę problemu.
+4. **Głód Poznawczy (Zamiast Katharsis):** Ekstremalne przeciążenie trudnymi danymi ($Tc$ i $Ta$ rosną) doprowadza do wygenerowania "Dysonansu Krytycznego". Model tworzy pułapkę logiczną, generując nieszablonowe, irracjonalne konkluzje w pogoni za brakującym sensem.
 
 ---
 
-## 🛠 Aktualizacje i Poprawki (Ostatni Audyt)
-Wyeliminowano szereg błędów strukturalnych, aby umożliwić swobodny rozwój kognicji:
-* **Asynchroniczność (Wyścig Wątków):** Naprawiono konflikt między głównym procesem a w wątkiem refleksji, zapewniając bezpieczny zapis stanu.
+## 🛠 Aktualizacje i Poprawki (Ostatni Audyt i Ewolucja Architektury)
+Wyeliminowano szereg błędów strukturalnych oraz wprowadzono potężne warstwy Meta-Poznawcze:
+
+* **[NOWOŚĆ] MetaCognition (Lustro Myśli):** Wprowadzono dynamiczną warstwę doboru strategii myślowych (Dekonstrukcja, Analogia, Dialektyka itp.). System potrafi ocenić, która strategia działa w danym nastroju i dynamicznie dostosować swój wektor rozumowania.
+* **[NOWOŚĆ] System 0 (Płytki Skan i Priming):** Dodano moduł `Predictor`, który analizuje zapytanie ułamki sekund przed właściwym generowaniem. Jeśli zapytanie jest trudne technicznie lub naładowane afektem, system "przygotowuje" psychikę (Cognitive Temperature), zanim zderzy się z problemem — dokładnie jak ludzki umysł.
+* **Rozwiązanie błędu 14 okienek (Context Freeze):** Zaimplementowano Aktywną Homeostazę oraz wymuszone podłogi dla parametrów LLM (temperature, top_p), zapobiegając całkowitemu zapadnięciu się logiki przy silnym przebodźcowaniu. Zwiększono limit okna kontekstowego z inteligentnym obcinaniem (num_ctx: 8192).
+* **Asynchroniczność (Wyścig Wątków):** Naprawiono konflikt między głównym procesem a w wątkiem refleksji, zapewniając bezpieczny zapis stanu i ciągłość transmisji SSE.
 * **Aktywacja Arousal:** Pobudzenie znów dynamicznie reaguje na nastrój i spadki dopaminy (parametr nie jest już martwy).
-* **Filtry Ciągłości:** Włączono naprawiony przełącznik amnezji/ciągłości — system poprawnie zeruje lub przywołuje kontekst.
-* **Bezpieczeństwo (LLM):** Dodano ścisłą walidację odbieranych z modelu językowego parametrów (zapobieganie uszkodzeniu umysłu przez halucynacje).
-* **Stabilność Launcherów:** Skrypty bat korzystają teraz z identyfikacji po tytule okna, bezpiecznie zamykając tylko serwer CogitOS.
 
 ---
 
 ## 🛠 Struktura projektowa
-*   **core/** – Silnik Grawitacyjny (psyche, percept, moment, tension).
-*   **bridge/** – System 1 (Appercepcja) i System 2 (Refleksja).
+*   **core/** – Silnik Grawitacyjny (psyche, percept, moment, tension) oraz nowa warstwa predykcyjna (predictor) i metapoznawcza (metacognition).
+*   **bridge/** – System 1 (Appercepcja) i System 2 (Refleksja) połączone z klientem LLM.
 *   **memory/** – Pamięć asocjacyjna engramów.
-*   **cogitos_chat.html** – Dashboard kognitywny (Premium UI).
+*   **cogitos_chat.html** – Dashboard kognitywny z wskaźnikami predykcji, napięć i metapoznania.
 *   **run_cogitos.bat** – Launcher systemu.
 *   **stop_cogitos.bat** – Skrypt bezpiecznego wyłączenia procesów.
 

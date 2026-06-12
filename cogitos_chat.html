@@ -105,11 +105,25 @@
         }
 
         @keyframes tremor {
-            0% { transform: translate(0,0); }
-            25% { transform: translate(1px, -1px); }
-            50% { transform: translate(-1px, 1px); }
-            75% { transform: translate(1px, 1px); }
-            100% { transform: translate(0,0); }
+            0% {
+                transform: translate(0, 0);
+            }
+
+            25% {
+                transform: translate(1px, -1px);
+            }
+
+            50% {
+                transform: translate(-1px, 1px);
+            }
+
+            75% {
+                transform: translate(1px, 1px);
+            }
+
+            100% {
+                transform: translate(0, 0);
+            }
         }
 
         /* Błysk Dopaminy */
@@ -118,15 +132,40 @@
         }
 
         @keyframes dopamine-flash {
-            0% { filter: brightness(1); box-shadow: 0 0 10px var(--harmony); }
-            50% { filter: brightness(2.5); box-shadow: 0 0 30px var(--harmony); }
-            100% { filter: brightness(1); box-shadow: 0 0 10px var(--harmony); }
+            0% {
+                filter: brightness(1);
+                box-shadow: 0 0 10px var(--harmony);
+            }
+
+            50% {
+                filter: brightness(2.5);
+                box-shadow: 0 0 30px var(--harmony);
+            }
+
+            100% {
+                filter: brightness(1);
+                box-shadow: 0 0 10px var(--harmony);
+            }
         }
 
         @keyframes jitter {
-            0% { opacity: 1; filter: brightness(1); transform: scaleY(1); }
-            50% { opacity: 0.8; filter: brightness(1.3); transform: scaleY(1.1); }
-            100% { opacity: 1; filter: brightness(1); transform: scaleY(1); }
+            0% {
+                opacity: 1;
+                filter: brightness(1);
+                transform: scaleY(1);
+            }
+
+            50% {
+                opacity: 0.8;
+                filter: brightness(1.3);
+                transform: scaleY(1.1);
+            }
+
+            100% {
+                opacity: 1;
+                filter: brightness(1);
+                transform: scaleY(1);
+            }
         }
 
         .phase-indicator {
@@ -216,6 +255,7 @@
                 text-shadow: 0 0 5px rgba(92, 84, 199, 0.2);
                 color: var(--text);
             }
+
             to {
                 text-shadow: 0 0 15px var(--accent);
                 color: #e6e5ff;
@@ -482,8 +522,24 @@
                 style="font-size: 11px; color: var(--accent); margin-top: 10px; font-style: italic; border-left: 2px solid var(--accent); padding-left: 8px;">
                 Motto: Inicjalizacja...</div>
             <div id="phase-tag" class="phase-indicator">Harmonia</div>
-            <div style="font-size: 9px; color: var(--text-dim); text-align: center; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px;">
+            <div
+                style="font-size: 9px; color: var(--text-dim); text-align: center; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px;">
                 Krok Sesji: <span id="session-step">0</span> | Czas: <span id="session-timer">00:00</span>
+            </div>
+        </section>
+
+        <!-- BUG-21 FIX: Nowa sekcja Lustro Myśli (MetaCognition) -->
+        <section class="stat-group" id="metacognition-section">
+            <h2 style="color: var(--harmony);">Lustro Myśli</h2>
+            <div style="font-size: 11px; color: var(--text-dim); margin-bottom: 5px;">Aktywna Strategia:</div>
+            <div id="active-strategy-label"
+                style="font-size: 13px; font-weight: 600; color: var(--text); padding: 8px; background: rgba(68, 221, 136, 0.1); border-left: 2px solid var(--harmony); border-radius: 4px;">
+                Inicjalizacja...
+            </div>
+            <div
+                style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 10px; color: var(--text-dim);">
+                <span>Pewność: <span id="strategy-weight" style="color: var(--text);">0%</span></span>
+                <span>Użycia: <span id="strategy-uses" style="color: var(--text);">0</span></span>
             </div>
         </section>
 
@@ -491,15 +547,21 @@
             <h2>Napięcia Kognitywne</h2>
             <div class="gauge-container">
                 <div class="gauge-label"><span>Afekt (Ta)</span><span id="val-ta">0.00</span></div>
-                <div class="gauge-bar"><div id="fill-ta" class="gauge-fill" style="background: var(--katharsis);"></div></div>
+                <div class="gauge-bar">
+                    <div id="fill-ta" class="gauge-fill" style="background: var(--katharsis);"></div>
+                </div>
             </div>
             <div class="gauge-container">
                 <div class="gauge-label"><span>Logika (Tc)</span><span id="val-tc">0.00</span></div>
-                <div class="gauge-bar"><div id="fill-tc" class="gauge-fill" style="background: var(--tension);"></div></div>
+                <div class="gauge-bar">
+                    <div id="fill-tc" class="gauge-fill" style="background: var(--tension);"></div>
+                </div>
             </div>
             <div class="gauge-container">
                 <div class="gauge-label"><span>Wartości (Tv)</span><span id="val-tv">0.00</span></div>
-                <div class="gauge-bar"><div id="fill-tv" class="gauge-fill" style="background: var(--accent);"></div></div>
+                <div class="gauge-bar">
+                    <div id="fill-tv" class="gauge-fill" style="background: var(--accent);"></div>
+                </div>
             </div>
         </section>
 
@@ -523,6 +585,8 @@
             <p style="font-size: 10px; color: var(--text-dim); margin-top: 8px;">Włącz, aby system pamiętał poprzednie
                 sesje i budował trwałą tożsamość.</p>
         </section> <!-- BUG-15 FIX: poprawne zamknięcie sekcji -->
+
+
     </div> <!-- Zamyka <div class="dashboard"> -->
 
     <div class="chat-container">
@@ -530,6 +594,9 @@
             <div class="message bot">System gotowy. Witaj w CogitOS. Jestem Twoją zewnętrzną warstwą kognitywną.</div>
         </div>
         <div class="input-area">
+            <input type="file" id="file-upload" accept=".txt" style="display: none;" onchange="handleFileUpload(event)">
+            <button onclick="document.getElementById('file-upload').click()" title="Załącz plik .txt"
+                style="background: var(--panel); border: 1px solid var(--border); padding: 0 15px; cursor: pointer; color: var(--text); border-radius: 4px; margin-right: 10px;">📎</button>
             <input type="text" id="user-input" placeholder="Wpisz coś, co poruszy system..."
                 onkeypress="if(event.key==='Enter') sendMessage()">
             <button onclick="sendMessage()">WYŚLIJ</button>
@@ -539,17 +606,37 @@
     <script>
         const messagesContainer = document.getElementById('chat-messages');
         const inputField = document.getElementById('user-input');
+        let attachedFileContent = "";
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                attachedFileContent = e.target.result;
+                inputField.placeholder = `Załączono: ${file.name} (Wpisz wiadomość i wyślij)`;
+            };
+            reader.readAsText(file);
+        }
 
         async function sendMessage() {
-            const text = inputField.value.trim();
-            if (!text) return;
+            let text = inputField.value.trim();
+            if (!text && !attachedFileContent) return;
+
+            let fullPayloadText = text;
+            if (attachedFileContent) {
+                fullPayloadText = text + (text ? "\n\n" : "") + "[Załączony plik txt]:\n" + attachedFileContent;
+                attachedFileContent = "";
+                inputField.placeholder = "Wpisz coś, co poruszy system...";
+                document.getElementById('file-upload').value = ""; // reset
+            }
 
             const selectedModel = document.getElementById('model-select').value;
             const continuity = document.getElementById('continuity-toggle').checked;
             const logo = document.getElementById('main-logo');
 
             // Add user message
-            appendMessage('user', text);
+            appendMessage('user', text ? text : "[Przesłano załącznik txt]");
             inputField.value = '';
 
             // Włącz animację pulsowania
@@ -564,7 +651,7 @@
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     body: JSON.stringify({
-                        message: text,
+                        message: fullPayloadText,
                         model: selectedModel,
                         continuity: continuity
                     })
@@ -572,15 +659,22 @@
 
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
+                let sseBuffer = "";  // BUG-16 FIX: Bufor na niepełne linie SSE
 
                 while (!streamFinished) {
                     const { value, done } = await reader.read();
                     if (done) break;
 
-                    const chunk = decoder.decode(value);
-                    const lines = chunk.split('\n');
+                    // BUG-16 FIX: Dołączamy chunk do bufora i dzielimy na linie
+                    sseBuffer += decoder.decode(value, { stream: true });
+                    const lines = sseBuffer.split('\n');
+                    // Ostatni element może być niepełną linią — zachowujemy go w buforze
+                    sseBuffer = lines.pop();
 
                     for (const line of lines) {
+                        // BUG-16 FIX: Ignoruj komentarze SSE (keepalive pings)
+                        if (line.startsWith(':') || line.trim() === '') continue;
+
                         if (line.startsWith('data: ')) {
                             const dataStr = line.slice(6);
                             if (dataStr === '[DONE]') {
@@ -592,6 +686,18 @@
                                 const payload = JSON.parse(dataStr);
                                 if (payload.type === 'cognitive') {
                                     updateUI(payload.data);
+                                } else if (payload.type === 'prediction') {
+                                    botMsgDiv.querySelector('.msg-content').innerHTML =
+                                        `<span style="opacity:0.6; font-style:italic">🔮 Predykcja (Sys 0): Ta:+${payload.data.delta_ta.toFixed(2)} Tc:+${payload.data.delta_tc.toFixed(2)}</span>`;
+                                } else if (payload.type === 'status') {
+                                    // Fazy przetwarzania kognitywnego
+                                    const statusMap = {
+                                        'thinking': '🧠 Przetwarzanie kognitywne...',
+                                        'embedding': '🔗 Kodowanie wektorowe...',
+                                        'processing': '⚙️ Budowanie kontekstu...'
+                                    };
+                                    botMsgDiv.querySelector('.msg-content').innerHTML =
+                                        `<span style="opacity:0.6; font-style:italic">${statusMap[payload.data] || '⏳ Pracuję...'}</span>`;
                                 } else if (payload.type === 'token') {
                                     if (fullText === "") botMsgDiv.querySelector('.msg-content').innerHTML = "";
                                     fullText += payload.data;
@@ -606,7 +712,7 @@
                 botMsgDiv.querySelector('.msg-content').innerText = "Błąd komunikacji z serwerem CogitOS.";
             } finally {
                 // Wyłącz animację pulsowania
-                if(logo) logo.classList.remove('thinking');
+                if (logo) logo.classList.remove('thinking');
             }
         }
 
@@ -652,7 +758,7 @@
             sessionSeconds++;
             const mins = Math.floor(sessionSeconds / 60);
             const secs = sessionSeconds % 60;
-            document.getElementById('session-timer').innerText = 
+            document.getElementById('session-timer').innerText =
                 `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }, 1000);
 
@@ -671,13 +777,13 @@
 
                 document.getElementById('val-ta').innerText = p.mood_ta;
                 document.getElementById('fill-ta').style.width = (valA * 100) + '%';
-                
+
                 document.getElementById('val-tc').innerText = p.mood_tc;
                 document.getElementById('fill-tc').style.width = (valC * 100) + '%';
-                
+
                 document.getElementById('val-tv').innerText = p.mood_tv;
                 document.getElementById('fill-tv').style.width = (valV * 100) + '%';
-                
+
                 // Efekt błysku przy silnym impulsie Tv
                 if (valV > 0.5) {
                     document.getElementById('fill-tv').style.boxShadow = '0 0 15px var(--accent)';
@@ -701,10 +807,10 @@
             if (p.dopamine !== undefined) {
                 const oldD = parseFloat(document.getElementById('val-d').innerText) || 0;
                 const dFill = document.getElementById('fill-d');
-                
+
                 document.getElementById('val-d').innerText = p.dopamine;
                 dFill.style.width = (p.dopamine * 100) + '%';
-                
+
                 // Błysk przy nagrodzie (wzrost > 0.02)
                 if (p.dopamine > oldD + 0.02) {
                     dFill.classList.add('reward-flash');
@@ -738,7 +844,13 @@
                 }
             }
 
-
+            // Aktualizacja Lustra Myśli (MetaCognition)
+            if (data.metacognition && data.metacognition.active_strategy) {
+                const strat = data.metacognition.active_strategy;
+                document.getElementById('active-strategy-label').innerText = strat.label || "Brak (Zrównoważony)";
+                document.getElementById('strategy-weight').innerText = Math.round(strat.weight * 100) + '%';
+                document.getElementById('strategy-uses').innerText = strat.usage_count;
+            }
         }
 
 
@@ -770,6 +882,8 @@
                 console.error("Błąd ładowania modeli:", err);
             }
         }
+
+
 
         // Inicjalizacja przy starcie
         (async function init() {

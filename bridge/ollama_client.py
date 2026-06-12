@@ -1,7 +1,13 @@
 import json
+import socket
 import urllib.request
 import urllib.error
 from typing import List, Dict, Generator, Optional
+
+# BUG-20 FIX: Per-read socket timeout (sekundy). Chroni przed zawieszeniem
+# streamu, gdy Ollama przestaje wysyłać tokeny (np. przepełnienie kontekstu,
+# OOM, lub model utknął w inference). 15s bez tokena = realny problem.
+STREAM_READ_TIMEOUT = 120.0  # BUG-21 FIX: z 30s na 120s — baaardzo długi czas na prefill przy dużych promptach
 
 class OllamaClient:
     """
@@ -52,19 +58,38 @@ class OllamaClient:
             return "Błąd komunikacji z modelem kognitywnym."
 
     def _handle_stream(self, req: urllib.request.Request) -> Generator[str, None, None]:
-        """Obsługuje streaming odpowiedzi z Ollama."""
+        """Obsługuje streaming odpowiedzi z Ollama z ochroną przed zawieszeniem.
+
+        BUG-20 FIX: Ustawia per-read socket timeout (STREAM_READ_TIMEOUT)
+        zamiast timeout na całe połączenie. Zapobiega sytuacji, w której
+        Ollama przestaje wysyłać tokeny (prefill, OOM, context overflow)
+        i handler wisi bez końca.
+        """
+        response = None
         try:
-            with urllib.request.urlopen(req, timeout=60) as response:
-                for line in response:
-                    if line:
-                        chunk = json.loads(line.decode("utf-8"))
-                        token = chunk.get("message", {}).get("content", "")
-                        if token:
-                            yield token
-                        if chunk.get("done"):
-                            break
+            response = urllib.request.urlopen(req, timeout=120)
+            # Wymuszamy timeout na KAŻDY read() z osobna
+            sock = response.fp.raw._sock if hasattr(response.fp, 'raw') else None
+            if sock is not None:
+                sock.settimeout(STREAM_READ_TIMEOUT)
+            for line in response:
+                if line:
+                    chunk = json.loads(line.decode("utf-8"))
+                    token = chunk.get("message", {}).get("content", "")
+                    if token:
+                        yield token
+                    if chunk.get("done"):
+                        break
+        except socket.timeout:
+            yield f"\n[Timeout: Ollama milczy od {STREAM_READ_TIMEOUT}s. Możliwe przepełnienie kontekstu lub przeciążenie modelu.]"
         except Exception as e:
             yield f"\n[Błąd streamingu: {e}]"
+        finally:
+            if response is not None:
+                try:
+                    response.close()
+                except Exception:
+                    pass
 
     def list_models(self) -> List[str]:
         """Zwraca listę dostępnych modeli."""

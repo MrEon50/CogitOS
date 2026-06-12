@@ -23,9 +23,11 @@ JSON powinien zawierać pola:
 - dopamine_delta: float (-0.15 do 0.15) Twoja satysfakcja. Kryteria: 
     * Kara (-): nudna rozmowa, brak nowych danych, zbyt bezpieczna odpowiedź.
     * Nagroda (+): nowe tematy, prowokacja, zderzenie koncepcji, trudne pytania.
+- strategy_fit: float (0.0 do 1.0) Jak bardzo przydatna i trafna była wybrana [AKTYWNA STRATEGIA MYŚLENIA]? Jeśli jej nie było lub nie pomogła, wpisz niską wartość (np. 0.1). Jeśli wymusiła ciekawą perspektywę, wpisz 0.8-1.0.
+- strategy_note: str (Jedno krótkie zdanie dla systemu: dlaczego ta strategia sprawdziła się lub nie).
 
 Zwróć TYLKO czysty JSON.
-Przykład: {{"valence": 0.2, "themes": ["logika"], "motto": "Głębokie zrozumienie", "dopamine_delta": 0.1, "coherence_delta": 0.0}}"""
+Przykład: {{"valence": 0.2, "themes": ["logika"], "motto": "Głębokie zrozumienie", "dopamine_delta": 0.1, "coherence_delta": 0.0, "strategy_fit": 0.8, "strategy_note": "Analogia pozwoliła ominąć blokadę logiczną."}}"""
 
         try:
             analysis = client.chat(
@@ -52,8 +54,10 @@ Przykład: {{"valence": 0.2, "themes": ["logika"], "motto": "Głębokie zrozumie
                     "coherence_delta": _clamp(raw.get("coherence_delta"), -0.1, 0.1),
                     "motto": str(raw.get("motto", "Eksploracja bieżąca"))[:80],
                     "dopamine_delta": _clamp(raw.get("dopamine_delta"), -0.15, 0.15),
+                    "strategy_fit": _clamp(raw.get("strategy_fit"), 0.0, 1.0, default=0.5),
+                    "strategy_note": str(raw.get("strategy_note", ""))[:150],
                 }
         except Exception as e:
             print(f"Błąd refleksji: {e}")
             
-        return {"valence": 0.0, "themes": [], "coherence_delta": 0.0, "motto": "Eksploracja bieżąca", "dopamine_delta": 0.0}
+        return {"valence": 0.0, "themes": [], "coherence_delta": 0.0, "motto": "Eksploracja bieżąca", "dopamine_delta": 0.0, "strategy_fit": 0.5, "strategy_note": ""}

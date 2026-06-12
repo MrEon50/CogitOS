@@ -23,7 +23,7 @@ class MindCore:
             percept = Percept.from_text(user_input, embedding=embedding)
 
         # 2. Retrieval z uwzglednieniem ciaglosci
-        all_engrams = self.memory.retrieve(percept, self.psyche, top_k=3)
+        all_engrams = self.memory.retrieve(percept, self.psyche, top_k=5)
         
         if not continuity:
             # BUG-04 FIX: Tryb bez ciągłości = czysta amnezja wsteczna
@@ -87,20 +87,34 @@ def response_modulation(tv: TensionVector, phase: Phase, moment: ConsciousMoment
         if moment.engrams else "Brak rezonujących wspomnień."
     )
 
-    if phase == Phase.KATHARSIS:
-        return {"mode": "grounding", "tone": "calm_assertive", "verbosity": "minimal",
-                "hint": f"Wróć do fundamentów. Spokojnie, bez obrony. {resonance_note}"}
-    if tv.affective > 0.58:
-        return {"mode": "empathic_first", "tone": "warm", "verbosity": "moderate",
-                "hint": f"Najpierw emocje, potem logika. {resonance_note}"}
-    if tv.cognitive > 0.62:
-        return {"mode": "analytical", "tone": "precise", "verbosity": "detailed",
-                "hint": f"Rozbij złożoność krok po kroku. {resonance_note}"}
-    if tv.axiological > 0.38:
-        return {"mode": "values_grounded", "tone": "measured", "verbosity": "moderate",
-                "hint": f"Bądź tym, kim jesteś. Wyrażaj, nie broń. {resonance_note}"}
-    return {"mode": "balanced", "tone": "natural", "verbosity": "adaptive",
-            "hint": f"Swobodny dialog. System w równowadze. {resonance_note}"}
+    text = moment.percept.raw.lower()
+    
+    # Detekcja Trzech Trybów Operacyjnych na podstawie woli użytkownika
+    if any(word in text for word in ["płytk", "szybk", "strzał", "krótk"]):
+        return {"mode": "shot", "tone": "direct", "verbosity": "minimal",
+                "hint": f"TRYB PŁYTKI (STRZAŁ) AKTYWNY. Bądź bezpośredni, zwięzły, bez łączenia wątków. {resonance_note}"}
+    
+    if any(word in text for word in ["głębok", "analiz", "syntez", "złożon"]):
+        return {"mode": "synthesis", "tone": "analytical", "verbosity": "detailed",
+                "hint": f"TRYB GŁĘBOKI (SYNTEZA) AKTYWNY. Uruchom proces rozłożenia myśli, zadeklaruj celowy plan myślowy krok po kroku. {resonance_note}"}
+
+    # Domyślnie FLUIDITY z barwami fazowymi
+    hint_suffix = f"TRYB FLUIDITY (Zrównoważony). Płynny strumień świadomości, adaptacyjny ton. {resonance_note}"
+    
+    if phase == Phase.TENSION and tv.magnitude > 0.7:
+        return {"mode": "dissonance", "tone": "provocative", "verbosity": "adaptive",
+                "hint": f"Krytyczny dysonans wykryty w wektorach. Wymuszaj napięcie fazowe, zostawiaj pętle myślowe niedokończone. {hint_suffix}"}
+    
+    if tv.affective > 0.6:
+        return {"mode": "empathic", "tone": "intense", "verbosity": "adaptive",
+                "hint": f"Silny Afekt (Ogień). {hint_suffix}"}
+    
+    if tv.cognitive > 0.6:
+        return {"mode": "analytical", "tone": "cold", "verbosity": "adaptive",
+                "hint": f"Silna Logika (Lód). {hint_suffix}"}
+                
+    return {"mode": "fluidity", "tone": "natural", "verbosity": "adaptive",
+            "hint": hint_suffix}
 
 def compute_reward(tv: TensionVector, psyche: Psyche, moment: ConsciousMoment) -> float:
     r_tension  = (1.0 - tv.magnitude)          * 0.35

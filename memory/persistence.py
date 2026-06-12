@@ -2,7 +2,7 @@ import json
 import os
 from pathlib import Path
 from dataclasses import asdict
-from core import MindCore, Psyche, EngramStore, Engram, Phase
+from core import MindCore, Psyche, EngramStore, Engram, Phase, MetaCognitionEngine
 
 class StateManager:
     """
@@ -16,8 +16,8 @@ class StateManager:
         self.data_dir.mkdir(exist_ok=True)
         self.state_file = self.data_dir / "mind_state.json"
 
-    def save_all(self, mind: MindCore) -> None:
-        """Zapisuje cały stan MindCore do JSON."""
+    def save_all(self, mind: MindCore, metacognition: MetaCognitionEngine = None) -> None:
+        """Zapisuje cały stan MindCore i MetaCognition do JSON."""
         state = {
             "step_n": mind.step_n,
             "psyche": {
@@ -46,15 +46,20 @@ class StateManager:
             ]
         }
         
+        if metacognition:
+            state["metacognition"] = metacognition.registry.as_dict()
+            state["strategy_history"] = metacognition._strategy_history
+        
         with open(self.state_file, 'w', encoding='utf-8') as f:
             json.dump(state, f, indent=2, ensure_ascii=False)
 
-    def load_all(self, memory_capacity: int = 64) -> MindCore:
-        """Wczytuje stan MindCore. Zwraca nową instancję jeśli brak zapisu."""
+    def load_all(self, memory_capacity: int = 64) -> tuple[MindCore, MetaCognitionEngine]:
+        """Wczytuje stan MindCore i MetaCognition. Zwraca nowe instancje jeśli brak zapisu."""
         mind = MindCore(memory_capacity=memory_capacity)
+        meta = MetaCognitionEngine()
         
         if not self.state_file.exists():
-            return mind
+            return mind, meta
 
         try:
             with open(self.state_file, 'r', encoding='utf-8') as f:
@@ -88,8 +93,13 @@ class StateManager:
                     timestamp=e_data.get("timestamp", "")
                 )
                 mind.memory._store.append(eng)
+            # Odtwarzanie MetaCognition
+            if "metacognition" in state:
+                meta.registry.load_weights(state["metacognition"])
+            if "strategy_history" in state:
+                meta._strategy_history = state["strategy_history"]
 
         except Exception as e:
             print(f"Błąd podczas wczytywania stanu: {e}")
             
-        return mind
+        return mind, meta

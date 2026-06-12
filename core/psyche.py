@@ -21,6 +21,7 @@ class Psyche:
     phase:     Phase = Phase.HARMONY
     dopamine:  float = 0.5  # Poziom satysfakcji / napedu
     motto:     str = "Eksploracja biezaca" # Samookreslony cel kognitywny
+    cognitive_temp: float = 0.5  # Temperatura od 0.0 (chlodna logika) do 1.0 (goracy afekt)
     
     # Nastroj (rezydualne napiecia)
     mood_ta:   float = 0.0
@@ -33,13 +34,35 @@ class Psyche:
 
     # Parametry Inercji i Kosztów
     MOOD_ATTACK:      float = 0.40  # Szybsza reakcja na bodźce
-    MOOD_DECAY:       float = 0.96  # Wolniejszy spadek (system dłużej 'pamięta' stres)
+    MOOD_DECAY:       float = 0.92  # BUG-21 FIX: Szybszy spadek (z 0.96) — zapobiega saturacji mood_ta
     COGNITIVE_COST:   float = 0.060 # WYSOKI: Myślenie Tc jest drogie
     METABOLIC_COST:   float = 0.035 # WYSOKI: Samo istnienie kosztuje
     RESET_THRESHOLD:  int = 6       # Kroki przy C < 0.2 przed resetem
     
     _history: list[float] = field(default_factory=list, repr=False)
     _reset_counter: int = 0
+    _ta_high_streak: int = 0  # BUG-21 FIX: Licznik kroków z mood_ta > 0.85
+
+    def apply_priming(self, prediction) -> None:
+        """
+        Zmienia parametry Psyche na bazie wstępnego skanu (Priming).
+        Wprowadza koncepcję 'Temperatury Kognitywnej'.
+        """
+        # Jeśli system spodziewa się wysokiego afektu, lekko się 'podgrzewa' i podnosi arousal
+        if prediction.delta_ta > 0.0:
+            self.cognitive_temp = min(1.0, self.cognitive_temp + (prediction.delta_ta * 0.2))
+            self.arousal = min(1.0, self.arousal + (prediction.delta_ta * 0.1))
+            self.mood_ta = min(1.0, self.mood_ta + (prediction.delta_ta * 0.05))
+
+        # Jeśli system spodziewa się wysokiego kosztu analitycznego, 'chłodzi' się i rośnie anchor
+        if prediction.delta_tc > 0.0:
+            self.cognitive_temp = max(0.0, self.cognitive_temp - (prediction.delta_tc * 0.2))
+            self.anchor = min(1.0, self.anchor + (prediction.delta_tc * 0.1))
+            self.mood_tc = min(1.0, self.mood_tc + (prediction.delta_tc * 0.05))
+
+        # Szybka stabilizacja temperatury do domyślnego 0.5 (homeostaza temperaturowa)
+        drift = (0.5 - self.cognitive_temp) * 0.1
+        self.cognitive_temp += drift
 
     def update(self, tv: "TensionVector") -> Phase:
         # ── 1. Aktualizacja Nastrojów ──
@@ -58,13 +81,26 @@ class Psyche:
         self.mood_ta = calc_mood(self.mood_ta, tv.affective, 1.0 / ta_inertia)
         self.mood_tc = calc_mood(self.mood_tc, tv.cognitive)
 
-        # Blokada Logiki: Jeśli Ta jest b. wysokie (strach), logika Tc cierpi niezależnie od D
-        if self.mood_ta > 0.8:
-            self.mood_tc *= 0.7 
+        # BUG-21 FIX: Aktywna homeostaza nastrojów — zapobiega saturacji mood_ta
+        # Jeśli mood_ta utrzymuje się powyżej 0.85 przez 3+ kroków, wymuszamy silniejszy decay
+        if self.mood_ta > 0.85:
+            self._ta_high_streak += 1
+            if self._ta_high_streak >= 3:
+                forced_decay = 0.85 ** (self._ta_high_streak - 2)  # Coraz silniejszy
+                self.mood_ta *= forced_decay
+        else:
+            self._ta_high_streak = max(0, self._ta_high_streak - 1)
 
-        # [BUG-02 FIX] Aktualizacja Arousal — dynamiczne pobudzenie
+        # Blokada Logiki: Jeśli Ta jest b. wysokie (strach), logika Tc cierpi niezależnie od D
+        # BUG-21 FIX: Złagodzono z 0.7 do 0.85 i dodano dolny próg 0.05
+        if self.mood_ta > 0.8:
+            self.mood_tc = max(0.05, self.mood_tc * 0.85)
+
+        # [BUG-02/BUG-21 FIX] Aktualizacja Arousal — z własną inercją
+        # Arousal nie jest już czystą pochodną mood_ta (co powodowało circular trigger)
+        target_arousal = self.mood_ta * 0.5 + self.mood_tc * 0.3 + (1.0 - self.dopamine) * 0.1
         self.arousal = min(1.0, max(0.0,
-            self.mood_ta * 0.6 + self.mood_tc * 0.3 + (1.0 - self.dopamine) * 0.1
+            self.arousal * 0.7 + target_arousal * 0.3  # Inercja: 70% poprzedni, 30% nowy
         ))
 
         # Tv reaguje na wartości, ale w afekcie jego głos jest słabszy
@@ -108,6 +144,20 @@ class Psyche:
         if self.dopamine < 0.35:
             self.mood_ta = min(1.0, self.mood_ta + (0.35 - self.dopamine) * 0.05)
 
+        # ── PRZECIĄŻENIE KOGNITYWNE (Critical Dissonance Void) ──
+        # Ogień i Lód napotykają punkt krytyczny. Nie ma tu ulgi ("zrzutu").
+        # Zamiast uspokojenia, następuje gwałtowne rozerwanie logiki (Lodu),
+        # co tworzy kognitywną próżnię i wymusza natychmiastową, irracjonalną imputację.
+        # BUG-21 FIX: Podniesiony próg z 2.2 na 2.5, usunięty warunek `arousal > 0.85`
+        # (arousal jest pochodną mood_ta — warunek arousal tworzył circular trigger)
+        if (self.mood_ta + self.mood_tc + self.mood_tv) > 2.5:
+            self.mood_tc *= 0.15          # Gwałtowne zapadnięcie się logiki (stworzenie Luki)
+            self.mood_ta = min(1.0, self.mood_ta * 1.2) # Wybuch afektu
+            self.dopamine = 0.05          # Skrajny głód kognitywny, brak ulgi!
+            self.coherence = 0.05         # Całkowity dysonans, żądający natychmiastowego rozwiązania
+            self.anchor *= 0.5            # Utrata gruntu, chaos myślowy
+            self.phase = Phase.TENSION    # Zostajemy w Napięciu, zmuszając do zapętlenia
+
         # ── 4. Mechanizm Resetu Synaptycznego ──
         if self.coherence < 0.2:
             self._reset_counter += 1
@@ -150,6 +200,7 @@ class Psyche:
             "coherence": self.coherence,
             "dopamine": self.dopamine,
             "motto": self.motto,
+            "cognitive_temp": self.cognitive_temp,
             "mood_ta": self.mood_ta,
             "mood_tc": self.mood_tc,
             "mood_tv": self.mood_tv
@@ -162,6 +213,7 @@ class Psyche:
             "C (coherence)": round(self.coherence, 3),
             "dopamine": round(self.dopamine, 3),
             "motto": self.motto,
+            "cog_temp": round(self.cognitive_temp, 3),
             "mood_ta": round(self.mood_ta, 3),
             "mood_tc": round(self.mood_tc, 3),
             "mood_tv": round(self.mood_tv, 3),

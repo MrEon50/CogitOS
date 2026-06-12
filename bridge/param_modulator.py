@@ -26,15 +26,15 @@ class ParameterModulator:
             temp += 0.2 # Euforia / Nadaktywnosc
 
         params = {
-            "temperature": round(max(0.1, min(1.8, temp)), 2),
-            "top_p": round(max(0.05, min(1.0, tp)), 2),
-            "repeat_penalty": round(max(1.0, min(1.8, rp)), 2),
-            "num_ctx": 8192,
+            "temperature": round(max(0.25, min(1.2, temp)), 2),  # BUG-21 FIX: floor 0.25 (z 0.1)
+            "top_p": round(max(0.15, min(1.0, tp)), 2),          # BUG-21 FIX: floor 0.15 (z 0.05)
+            "repeat_penalty": round(max(1.0, min(1.3, rp)), 2),
+            "num_ctx": 8192,  # BUG-21 FIX: z 4096 — zapas na dłuższe rozmowy
         }
         
         if psyche.phase == Phase.KATHARSIS:
-            params["temperature"] = 0.15
-            params["top_p"] = 0.2
-            params["repeat_penalty"] = 2.0
+            params["temperature"] = 0.2
+            params["top_p"] = 0.3
+            params["repeat_penalty"] = 1.15
             
         return params
